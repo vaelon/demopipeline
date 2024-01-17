@@ -127,3 +127,4 @@ pipeline:
                 type: StageRollback
         delegateSelectors:
           - helm-delegate-jesse
+  allowStageExecutions: true
