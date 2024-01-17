@@ -84,3 +84,44 @@ pipeline:
                       sleep 10
                       curl localhost:8080
                       curl localhost:8080?Hello!_I_am_a_nice_demo!
+    - stage:
+        name: Deploy Go HelloServer
+        identifier: Deploy_Go_HelloServer
+        description: ""
+        type: Deployment
+        spec:
+          deploymentType: Kubernetes
+          service:
+            serviceRef: Go_HelloServer
+          environment:
+            environmentRef: Local
+            deployToAll: false
+            infrastructureDefinitions:
+              - identifier: Minikube
+          execution:
+            steps:
+              - step:
+                  name: Rollout Deployment
+                  identifier: rolloutDeployment
+                  type: K8sRollingDeploy
+                  timeout: 10m
+                  spec:
+                    skipDryRun: false
+                    pruningEnabled: false
+            rollbackSteps:
+              - step:
+                  name: Rollback Rollout Deployment
+                  identifier: rollbackRolloutDeployment
+                  type: K8sRollingRollback
+                  timeout: 10m
+                  spec:
+                    pruningEnabled: false
+        tags: {}
+        failureStrategies:
+          - onFailure:
+              errors:
+                - AllErrors
+              action:
+                type: StageRollback
+        delegateSelectors:
+          - helm-delegate-jesse
