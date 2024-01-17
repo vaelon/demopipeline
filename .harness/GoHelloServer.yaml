@@ -21,7 +21,7 @@ pipeline:
             type: KubernetesDirect
             spec:
               connectorRef: Minikube
-              namespace: builds
+              namespace: default
               automountServiceAccountToken: true
               nodeSelector: {}
               os: Linux
