@@ -108,6 +108,8 @@ pipeline:
                   spec:
                     skipDryRun: false
                     pruningEnabled: false
+                    delegateSelectors:
+                      - helm-delegate-jesse
             rollbackSteps:
               - step:
                   name: Rollback Rollout Deployment
