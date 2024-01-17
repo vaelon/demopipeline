@@ -7,7 +7,7 @@ template:
     type: BuildAndPushDockerRegistry
     spec:
       connectorRef: Local_Docker
-      repo: vaelondocker/gobuild
+      repo: <+input>
       tags:
         - <+pipeline.sequenceId>
   identifier: Build_and_Push_Go
