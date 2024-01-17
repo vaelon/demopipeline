@@ -35,4 +35,4 @@ pipeline:
                     connectorRef: Local_Docker
                     repo: vaelondocker/gobuild
                     tags:
-                      - stable
+                      - <+pipeline.sequenceId>
