@@ -28,6 +28,23 @@ pipeline:
           execution:
             steps:
               - step:
+                  type: Run
+                  name: Run Unit Test
+                  identifier: Run_Unit_Test
+                  spec:
+                    connectorRef: Local_Docker
+                    image: golang:1.17
+                    shell: Sh
+                    command: |-
+                      go get gotest.tools/gotestsum
+                      gotestsum --format=standard-verbose --junitfile unit-tests.xml || true
+                      CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo
+                    reports:
+                      type: JUnit
+                      spec:
+                        paths:
+                          - "*.xml"
+              - step:
                   type: BuildAndPushDockerRegistry
                   name: BuildAndPushDockerRegistry_1
                   identifier: BuildAndPushDockerRegistry_1
@@ -36,3 +53,34 @@ pipeline:
                     repo: vaelondocker/gobuild
                     tags:
                       - <+pipeline.sequenceId>
+    - stage:
+        name: Run Integration Test
+        identifier: Run_Integration_Test
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: false
+          infrastructure:
+            useFromStage: Build_Go_HelloServer
+          execution:
+            steps:
+              - step:
+                  type: Background
+                  name: Background_1
+                  identifier: Background_1
+                  spec:
+                    connectorRef: Local_Docker
+                    image: vaelondocker/gobuild:<+pipeline.sequenceId>
+                    shell: Sh
+              - step:
+                  type: Run
+                  name: Test Server Connection
+                  identifier: Test_Server_Connection
+                  spec:
+                    connectorRef: Local_Docker
+                    image: curlimages/curl:7.73.0
+                    shell: Sh
+                    command: |-
+                      sleep 10
+                      curl localhost:8080
+                      curl localhost:8080?Hello!_I_am_a_nice_demo!
