@@ -83,7 +83,7 @@ pipeline:
                       curl localhost:8080
                       curl localhost:8080?Hello!_I_am_a_nice_demo!
     - stage:
-        name: GoHelloServer
+        name: gohello
         identifier: Deploy_Go_HelloServer
         tags: {}
         template:
